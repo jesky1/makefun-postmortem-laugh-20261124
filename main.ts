@@ -49,6 +49,15 @@ function validateEntry(entry) {
   if (entry.includes('\n') || entry.includes('\r')) {
     throw new Error('Entry must not contain newline characters.');
   }
+  // The gate rejects whitespace-only text, so fail loudly here too.
+  if (entry.trim().length === 0) {
+    throw new Error('Entry must not be only whitespace.');
+  }
+  // No leading or trailing spaces: the judge reads the file exactly,
+  // so stray padding would be part of the entry.
+  if (entry !== entry.trim()) {
+    throw new Error('Entry must not start or end with whitespace.');
+  }
   const sentences = countSentences(entry);
   if (sentences < MIN_SENTENCES || sentences > MAX_SENTENCES) {
     throw new Error(
